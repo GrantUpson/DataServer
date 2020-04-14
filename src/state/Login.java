@@ -8,7 +8,7 @@ import java.io.IOException;
 
 /*
   @author Grant Upson : 385831
-          Adib Shadman : 468684
+  @author Adib Shadman : 468684
 */
 
 public class Login implements State
