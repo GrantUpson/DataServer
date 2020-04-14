@@ -1,7 +1,8 @@
 package state;
 
-import com.mysql.cj.xdevapi.Client;
 import upson.grant.ClientRequest;
+
+import java.io.BufferedWriter;
 
 /*
   @author Grant Upson : 385831
@@ -9,11 +10,13 @@ import upson.grant.ClientRequest;
 
 public class Login implements State
 {
-    ClientRequest request;
+    private ClientRequest request;
+    private BufferedWriter writer;
 
-    public Login(ClientRequest request)
+    public Login(ClientRequest request, BufferedWriter writer)
     {
         this.request = request;
+        this.writer = writer;
     }
 
     @Override
@@ -25,7 +28,13 @@ public class Login implements State
     @Override
     public String parseCommand(String command)
     {
-
+        
         return "";
+    }
+
+    @Override
+    public void sendMenu()
+    {
+
     }
 }

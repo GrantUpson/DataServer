@@ -8,4 +8,5 @@ public interface State
 {
     void changeState(State newState);
     String parseCommand(String command);
+    void sendMenu();
 }

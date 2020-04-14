@@ -12,7 +12,6 @@ public class ClientRequest implements Runnable
     public ClientRequest(Socket connection)
     {
         this.clientConnection = connection;
-        this.currentState = new Connected(this);
     }
 
     @Override
@@ -21,8 +20,8 @@ public class ClientRequest implements Runnable
         try(BufferedWriter clientWriter = new BufferedWriter(new OutputStreamWriter(clientConnection.getOutputStream()));
             BufferedReader clientReader = new BufferedReader(new InputStreamReader(clientConnection.getInputStream())))
         {
-            clientWriter.write(CONNECTION_MENU + "\r\n");
-            clientWriter.flush();
+            currentState = new Connected(this, clientWriter);
+            currentState.sendMenu();
 
             String command = clientReader.readLine().toLowerCase();
 

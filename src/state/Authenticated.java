@@ -1,15 +1,18 @@
 package state;
 
-import com.mysql.cj.xdevapi.Client;
 import upson.grant.ClientRequest;
+
+import java.io.BufferedWriter;
 
 public class Authenticated implements State
 {
     private ClientRequest request;
+    private BufferedWriter writer;
 
-    public Authenticated(ClientRequest request)
+    public Authenticated(ClientRequest request, BufferedWriter writer)
     {
         this.request = request;
+        this.writer = writer;
     }
 
     @Override
@@ -23,5 +26,11 @@ public class Authenticated implements State
     {
 
         return "";
+    }
+
+    @Override
+    public void sendMenu()
+    {
+
     }
 }
