@@ -2,6 +2,7 @@ package upson.grant;
 
 /*
   @author Grant Upson : 385831
+  @author Adib Shadman : 468684
 */
 
 public class Query
@@ -17,9 +18,9 @@ public class Query
         public abstract Status updateStatus();
     }
 
-    private int id;
-    private Type type;
-    private String request;
+    private final int id;
+    private final Type type;
+    private final String request;
     private Status currentStatus;
     private String result;
 

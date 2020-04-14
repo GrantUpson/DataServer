@@ -3,15 +3,30 @@ package upson.grant;
 import state.*;
 import java.io.*;
 import java.net.Socket;
+import java.sql.Timestamp;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.PriorityBlockingQueue;
+
+/*
+  @author Grant Upson : 385831
+  @author Adib Shadman : 468684
+*/
 
 public class ClientRequest implements Runnable
 {
     private final Socket clientConnection;
-    private State currentState;
 
-    public ClientRequest(Socket connection)
+    private final ConcurrentHashMap<String, Query> results;
+    private final PriorityBlockingQueue<Query> requests;
+    private State currentState;
+    private boolean running;
+
+    public ClientRequest(Socket connection, PriorityBlockingQueue<Query> requests, ConcurrentHashMap<String, Query> results)
     {
         this.clientConnection = connection;
+        this.requests = requests;
+        this.results = results;
+        this.running = true;
     }
 
     @Override
@@ -21,26 +36,43 @@ public class ClientRequest implements Runnable
             BufferedReader clientReader = new BufferedReader(new InputStreamReader(clientConnection.getInputStream())))
         {
             currentState = new Connected(this, clientWriter);
-            currentState.sendMenu();
+            String command;
 
-            String command = clientReader.readLine().toLowerCase();
-
-            while(!command.equalsIgnoreCase("exit"))
+            while(running)
             {
+                currentState.sendMenu();
+                command = clientReader.readLine().toLowerCase();
                 String result = currentState.parseCommand(command);
                 clientWriter.write(result + "\r\n");
                 clientWriter.flush();
-                command = clientReader.readLine().toLowerCase();
             }
+
+            System.out.println("Client disconnected from " + clientConnection.getInetAddress() + " on port " + clientConnection.getLocalPort() +
+                    " at " + new Timestamp(System.currentTimeMillis()));
         }
-        catch(IOException ioException)
+        catch(IOException | NullPointerException exception)
         {
-            System.out.println("Error: " + ioException.getLocalizedMessage());
+            System.out.println("Error: " + exception.getMessage());
         }
     }
 
     public void changeState(State newState)
     {
         this.currentState = newState;
+    }
+
+    public ConcurrentHashMap<String, Query> getResultsHashmap()
+    {
+        return results;
+    }
+
+    public PriorityBlockingQueue<Query> getRequestsPriorityQueue()
+    {
+        return requests;
+    }
+
+    public void closeApplication()
+    {
+        running = false;
     }
 }

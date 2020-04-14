@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 
 /*
   @author Grant Upson : 385831
+  @author Adib Shadman : 468684
 */
 
 public class Login implements State
@@ -34,6 +35,6 @@ public class Login implements State
     @Override
     public void sendMenu()
     {
-
+        System.out.println("In Login");
     }
 }
