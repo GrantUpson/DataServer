@@ -1,7 +1,6 @@
 package state;
 
 import upson.grant.ClientRequest;
-
 import java.io.BufferedWriter;
 
 public class Authenticated implements State

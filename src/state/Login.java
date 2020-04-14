@@ -1,7 +1,6 @@
 package state;
 
 import upson.grant.ClientRequest;
-
 import java.io.BufferedWriter;
 
 /*
@@ -28,7 +27,7 @@ public class Login implements State
     @Override
     public String parseCommand(String command)
     {
-        
+
         return "";
     }
 

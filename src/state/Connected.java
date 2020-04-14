@@ -1,8 +1,6 @@
 package state;
 
-import com.mysql.cj.log.Log;
 import upson.grant.ClientRequest;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 
