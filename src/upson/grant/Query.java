@@ -1,5 +1,9 @@
 package upson.grant;
 
+/*
+  @author Grant Upson : 385831
+*/
+
 public class Query
 {
     public enum Type { MESSAGE, CONTAINS_WORD, FROM_AIRLINE, MOST_FREQUENT_CHARACTER; }

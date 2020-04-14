@@ -26,6 +26,11 @@ public class DataServer
         this.port = port;
     }
 
+    public void changeState()
+    {
+
+    }
+
     public void launch()
     {
         //new Thread(new TweetHandler("localhost", 6666)).start();

@@ -1,22 +1,18 @@
 package upson.grant;
 
+import state.*;
 import java.io.*;
 import java.net.Socket;
 
 public class ClientRequest implements Runnable
 {
-    private enum State { LOGGED_OUT, LOGGED_IN };
     private final Socket clientConnection;
-
-    private final String CONNECTION_MENU = "[Register]: Register an account. /[Login]: Log in to your account.";
-    private final String MENU = "";
-
     private State currentState;
 
     public ClientRequest(Socket connection)
     {
         this.clientConnection = connection;
-        this.currentState = State.LOGGED_OUT;
+        this.currentState = new Connected(this);
     }
 
     @Override
@@ -32,7 +28,7 @@ public class ClientRequest implements Runnable
 
             while(!command.equalsIgnoreCase("exit"))
             {
-                String result = parseCommand(command);
+                String result = currentState.parseCommand(command);
                 clientWriter.write(result + "\r\n");
                 clientWriter.flush();
                 command = clientReader.readLine().toLowerCase();
@@ -44,9 +40,8 @@ public class ClientRequest implements Runnable
         }
     }
 
-    public String parseCommand(String command)
+    public void changeState(State newState)
     {
-
-        return "";
+        this.currentState = newState;
     }
 }
