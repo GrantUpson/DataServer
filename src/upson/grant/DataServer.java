@@ -1,7 +1,11 @@
 package upson.grant;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.sql.Timestamp;
 
 /*
   @author Grant Upson : 385831
@@ -44,13 +48,13 @@ public class DataServer
 
     public static void main(String[] args)
     {
-        if(args.length != 0)
+        if(args.length != 1)
         {
             System.out.println("Error: Invalid parameters. Usage: ");
         }
         else
         {
-            new DataServer().launch();
+            new DataServer(Integer.parseInt(args[0])).launch();
         }
     }
 }

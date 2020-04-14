@@ -5,48 +5,91 @@ package upson.grant;
   @author Adib Shadman : 468684
 */
 
-import com.mysql.cj.protocol.Resultset;
-
-import javax.xml.transform.Result;
 import java.sql.*;
 
 public class Database
 {
-    public int databaseConnection(String username,String password)
+    private final String url = "jdbc:mysql://localhost:3306/data_server?serverTimezone=Australia/Melbourne";
+
+    private final String username;
+    private final String password;
+
+    public Database(String username, String password)
     {
-        Connection conn = null;
-        int numberRow = 0;
-        String url = "jdbc:mysql://localhost:3306/data_server";
-        String user = "root";
-        String databasePassword = "";
-        PreparedStatement preparedStatement = null;
-        try
+        this.username = username;
+        this.password = password;
+    }
+
+    public boolean login(String username, String password)
+    {
+        int numberOfRows = 0;
+
+        try(Connection connection = DriverManager.getConnection(url, this.username, this.password))
         {
-            // db parameters
-            // create a connection to the database
+            String query = "Select * from account where username = ? and password = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, username);
+            statement.setString(2, password);
 
-            conn = DriverManager.getConnection(url, user, password);
-            Statement statement = conn.createStatement();
-
-            String login = "Select * from account where username = ? and password = ?";
-            preparedStatement = conn.prepareStatement(login);
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
-
-            ResultSet result = preparedStatement.executeQuery();
+            ResultSet result = statement.executeQuery();
 
             while(result.next())
-                {
-                    numberRow = result.getInt("count(*)");
-                }
-
-            conn.close();
+            {
+                numberOfRows++;
+            }
         }
-        catch (SQLException e)
+        catch (SQLException sqlException)
         {
-            System.out.println(e.getMessage());
+            System.out.println("Error " + sqlException.getMessage());
         }
 
-        return numberRow;
+        return (numberOfRows > 0);
+    }
+
+    public boolean usernameExists(String username)
+    {
+        int numberOfRows = 0;
+
+        try(Connection connection = DriverManager.getConnection(url, this.username, this.password))
+        {
+            String query = "Select * from account where username = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, username);
+
+            ResultSet result = statement.executeQuery();
+
+            while(result.next())
+            {
+                numberOfRows++;
+            }
+        }
+        catch (SQLException sqlException)
+        {
+            System.out.println("Error " + sqlException.getMessage());
+        }
+
+        return (numberOfRows > 0);
+    }
+
+    public boolean register(String username, String password)
+    {
+        boolean successful = false;
+
+        try(Connection connection = DriverManager.getConnection(url, this.username, this.password))
+        {
+            String query = "INSERT INTO account (username, password) VALUES (?, ?)";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, username);
+            statement.setString(2, password);
+
+            statement.executeUpdate();
+            successful = true;
+        }
+        catch (SQLException sqlException)
+        {
+            System.out.println("Error " + sqlException.getMessage());
+        }
+
+        return successful;
     }
 }

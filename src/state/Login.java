@@ -2,7 +2,6 @@ package state;
 
 import upson.grant.ClientRequest;
 import upson.grant.Database;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 
@@ -13,49 +12,66 @@ import java.io.IOException;
 
 public class Login implements State
 {
-    private ClientRequest request;
-    private BufferedWriter writer;
-    private final String Menu1 = "[username]: Enter your username. / [password]: Enter your password.";
-    private final String LOGIN_SUCCESSFULL = "Login Successfull";
-    private final String LOGIN_FAILED = "Login Failed";
+    private final ClientRequest connection;
+    private final BufferedWriter writer;
+    private Database accountDatabase;
 
-
-    public Login(ClientRequest request, BufferedWriter writer)
+    public Login(ClientRequest connection, BufferedWriter writer)
     {
-        this.request = request;
+        this.connection = connection;
         this.writer = writer;
+        accountDatabase = new Database("grant", "Killthemall2");
     }
 
     @Override
     public void changeState(State newState)
     {
-        request.changeState(newState);
+        connection.changeState(newState);
     }
 
     @Override
     public String parseCommand(String command)
     {
-        String authenticationResult = "";
         String[] result = command.split(" ");
-        Database database = new Database();
+        String response;
 
-        int loginResult = database.databaseConnection(result[0], result[1]);
-
-        if(loginResult == 1)
+        if(result.length == 2)
+        {
+            if(accountDatabase.login(result[0], result[1]))
             {
-                authenticationResult = LOGIN_SUCCESSFULL;
+                response = "Login successful";
+                connection.changeState(new Authenticated(connection, writer, connection.getResultsHashmap()));
             }
-
+            else
+            {
+                response = "Incorrect username or password, try again";
+            }
+        }
+        else if(result.length == 1)
+        {
+            if(result[0].equalsIgnoreCase("return"))
+            {
+                response = "";
+                connection.changeState(new Connected(connection, writer));
+            }
+            else
+            {
+                response = "Invalid argument, try again";
+            }
+        }
         else
-            {
-                authenticationResult = LOGIN_FAILED;
-            }
-        return authenticationResult;
+        {
+            response = "Invalid number of arguments, try again";
+        }
+
+        return response;
     }
 
     @Override
     public void sendMenu()
     {
+        final String MENU = "Enter your username and password: <Username> <Password> or <Return> to return";
+
         try
         {
             writer.write(MENU + "\r\n");

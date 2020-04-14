@@ -4,6 +4,7 @@ import upson.grant.ClientRequest;
 import upson.grant.Database;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.UUID;
 
 /*
   @author Grant Upson : 385831
@@ -20,7 +21,7 @@ public class Register implements State
     {
         this.connection = connection;
         this.writer = writer;
-        this.accountDatabase = new Database();
+        this.accountDatabase = new Database("grant", "Killthemall2");
     }
 
     @Override
@@ -41,8 +42,32 @@ public class Register implements State
         }
         else
         {
-            response = "Username would go here";
-            changeState(new Authenticated(connection, writer, connection.getResultsHashmap()));
+            if(!command.equalsIgnoreCase("return"))
+            {
+                if(accountDatabase.usernameExists(command))
+                {
+                    response = "That username is already in use, try another";
+                }
+                else
+                {
+                    String password = generatePasscode();
+
+                    if(accountDatabase.register(command, password))
+                    {
+                        response = "Registration successful, your password is: " + password;
+                        changeState(new Connected(connection, writer));
+                    }
+                    else
+                    {
+                        response = "Registration unsuccessful, try again";
+                    }
+                }
+            }
+            else
+            {
+                response = "";
+                connection.changeState(new Connected(connection, writer));
+            }
         }
 
         return response;
@@ -51,7 +76,7 @@ public class Register implements State
     @Override
     public void sendMenu()
     {
-        final String MENU = "Enter a username to register with: ";
+        final String MENU = "Enter a username to register with: <Username> or <Return> to return";
 
         try
         {
@@ -62,5 +87,13 @@ public class Register implements State
         {
             System.out.println("Error: " + ioException.getMessage());
         }
+    }
+
+    public String generatePasscode()
+    {
+        final int PASSCODE_LENGTH = 8;
+
+        UUID potentialCharacters = UUID.randomUUID();
+        return potentialCharacters.toString().replace("-", "").substring(0, PASSCODE_LENGTH);
     }
 }
