@@ -31,8 +31,8 @@ public class DataServer
 
     public void launch()
     {
-        new Thread(new WorkerHandler("localhost", 7777, tweetQueue)).start();
-        new Thread(new QueryHandler("localhost", 8888, requests, results)).start();
+        new Thread(new WorkerHandler(7777, tweetQueue)).start();
+        new Thread(new QueryHandler(8888, requests, results)).start();
         new Thread(new TweetHandler("localhost", 9999, tweetQueue)).start();
 
         try(ServerSocket listeningConnection = new ServerSocket(port))

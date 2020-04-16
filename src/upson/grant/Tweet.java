@@ -1,5 +1,6 @@
 package upson.grant;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /*
@@ -7,7 +8,7 @@ import java.sql.Timestamp;
   @author Adib Shadman : 468684
 */
 
-public class Tweet
+public class Tweet implements Serializable
 {
     private final long UID;
     private final String sentiment;
