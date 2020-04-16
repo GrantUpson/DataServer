@@ -1,11 +1,11 @@
 package upson.grant;
 
+import java.sql.*;
+
 /*
   @author Grant Upson : 385831
   @author Adib Shadman : 468684
 */
-
-import java.sql.*;
 
 public class Database
 {

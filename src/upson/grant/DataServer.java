@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.sql.Timestamp;
 
@@ -16,6 +17,7 @@ public class DataServer
 {
     private final ConcurrentHashMap<String, Query> results;
     private final PriorityBlockingQueue<Query> requests;
+    private final LinkedBlockingQueue<Tweet> tweetQueue;
 
     private final int port;
 
@@ -23,12 +25,15 @@ public class DataServer
     {
         results = new ConcurrentHashMap<>(1000);
         requests = new PriorityBlockingQueue<>(300);
+        tweetQueue = new LinkedBlockingQueue<>(300);
         this.port = port;
     }
 
     public void launch()
     {
-        //new Thread(new TweetHandler("localhost", 6666)).start();
+        new Thread(new WorkerHandler("localhost", 7777, tweetQueue)).start();
+        new Thread(new QueryHandler("localhost", 8888, requests, results)).start();
+        new Thread(new TweetHandler("localhost", 9999, tweetQueue)).start();
 
         try(ServerSocket listeningConnection = new ServerSocket(port))
         {
@@ -50,7 +55,7 @@ public class DataServer
     {
         if(args.length != 1)
         {
-            System.out.println("Error: Invalid parameters. Usage: ");
+            System.out.println("Error: Invalid number of parameters");
         }
         else
         {
