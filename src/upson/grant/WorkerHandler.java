@@ -39,6 +39,8 @@ public class WorkerHandler implements Runnable
                     try
                     {
                         objectSender.writeObject(tweetQueue.take());
+                        objectSender.flush();
+                        objectSender.reset();
                     }
                     catch(InterruptedException iException)
                     {

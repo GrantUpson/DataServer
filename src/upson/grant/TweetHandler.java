@@ -41,12 +41,12 @@ public class TweetHandler implements Runnable
 
                 try
                 {
-                    Timestamp created;
+                    Timestamp dateCreated;
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy hh:mm");
                     Date parsedDate = formatter.parse(tweet[12]);
-                    created = new java.sql.Timestamp(parsedDate.getTime());
+                    dateCreated = new java.sql.Timestamp(parsedDate.getTime());
 
-                    Tweet newTweet = new Tweet(Long.parseLong(tweet[0]), tweet[1], tweet[5], tweet[10], created);
+                    Tweet newTweet = new Tweet(Long.parseLong(tweet[0]), tweet[1], tweet[5], tweet[10], dateCreated);
                     tweetQueue.put(newTweet);
                 }
                 catch(ParseException | InterruptedException exception)

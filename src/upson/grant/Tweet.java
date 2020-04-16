@@ -14,7 +14,7 @@ public class Tweet implements Serializable
     private final String sentiment;
     private final String airline;
     private final String message;
-    private final Timestamp created;
+    private final Timestamp dateCreated;
 
     public Tweet(long UID, String sentiment, String airline, String message, Timestamp created)
     {
@@ -22,12 +22,12 @@ public class Tweet implements Serializable
         this.sentiment = sentiment;
         this.airline = airline;
         this.message = message;
-        this.created = created;
+        this.dateCreated = created;
     }
 
     public long getUID() { return UID; }
     public String getSentiment() { return sentiment; }
     public String getAirline() { return airline; }
     public String getMessage() { return message; }
-    public Timestamp getCreated() { return created; }
+    public Timestamp getDateCreated() { return dateCreated; }
 }
