@@ -4,6 +4,8 @@ import upson.grant.ClientRequest;
 import upson.grant.Query;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 
@@ -39,12 +41,15 @@ public class Querying implements State
         String[] result = command.split(" ");
         String response = "";
 
-        if(result.length == 2)
+        if(result.length == 3)
         {
+            int id = generateQueryID();
+            response = "Your query has been submitted successfully. Query ID: " + id;
+
             switch(result[0])
             {
                 case "1":
-                    response = "By ID!";
+                    requests.add(new Query(id, Query.Type.MESSAGE, result[1], Integer.parseInt(result[2])));
                     break;
                 case "2":
                     response = "Contains word!";
@@ -55,19 +60,38 @@ public class Querying implements State
                 case "4":
                     response = "Most frequent character in tweet!";
                     break;
-                case "5":
-                    if(result[1].equalsIgnoreCase("return"))
-                    {
-                        connection.changeState(new Authenticated(connection, writer, results));
-                    }
-                    else
-                    {
-                        response = "Invalid option, try again";
-                    }
-                    break;
                 default:
                     response = "Invalid option, try again";
                     break;
+            }
+        }
+        else if(result.length == 2)
+        {
+            if(result[0].equalsIgnoreCase("5"))
+            {
+                if(cancelQuery(Integer.parseInt(result[1])))
+                {
+                    response = "Query has been cancelled successfully";
+                }
+                else
+                {
+                    response = "Cannot cancel query, either it has been completed or the ID is wrong.";
+                }
+            }
+            else
+            {
+                response = "Invalid option, try again";
+            }
+        }
+        else if(result.length == 1)
+        {
+            if(result[0].equalsIgnoreCase("6"))
+            {
+                connection.changeState(new Authenticated(connection, writer, results));
+            }
+            else
+            {
+                response = "Invalid option, try again";
             }
         }
         else
@@ -81,9 +105,9 @@ public class Querying implements State
     @Override
     public void sendMenu()
     {
-        final String MENU = "1) Search for a tweet by ID: <1> <ID> /2) Search for a tweet containing a word: <2> <Word> /" +
-                "3) Number of tweets from an airline: <3> <Airline> /4) Most frequent character in a tweet: <4> <TweetID> /" +
-                "5) Return to Options: <5> <Return>";
+        final String MENU = "1) Search for a tweet by ID: <1> <ID> <Priority>/2) Search for a tweet containing a word: <2> <Word> <Priority>/" +
+                "3) Number of tweets from an airline: <3> <Airline> <Priority>/4) Most frequent character in a tweet: <4> <TweetID> <Priority>/" +
+                "5) Cancel query: <5> <ID< /6) Return to Options: <6>";
 
         try
         {
@@ -94,5 +118,29 @@ public class Querying implements State
         {
             System.out.println("Error: " + ioException.getMessage());
         }
+    }
+
+    public boolean cancelQuery(int ID)
+    {
+        boolean successful = false;
+
+        for(Query query : requests)
+        {
+            if(query.getID() == ID)
+            {
+                requests.remove(query);
+                successful = true;
+            }
+        }
+
+        return successful;
+    }
+
+    public int generateQueryID()
+    {
+        final int ID_LENGTH = 8;
+
+        String partialID = String.format("%040d", new BigInteger(UUID.randomUUID().toString().replace("-", ""), 16));
+        return Integer.parseInt(partialID.substring(0, ID_LENGTH));
     }
 }
