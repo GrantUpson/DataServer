@@ -1,5 +1,8 @@
 package upson.grant;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 
@@ -24,6 +27,18 @@ public class QueryHandler implements Runnable
     @Override
     public void run()
     {
+        try(ServerSocket listeningConnection = new ServerSocket(port))
+        {
+            Socket connection = listeningConnection.accept();
 
+            while(true)
+            {
+
+            }
+        }
+        catch(IOException ioException)
+        {
+            System.out.println("Error: " + ioException.getMessage());
+        }
     }
 }

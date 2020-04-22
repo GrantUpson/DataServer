@@ -1,7 +1,8 @@
 package upson.grant;
 
-import java.io.BufferedWriter;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,11 +17,13 @@ public class WorkerHandler implements Runnable
 {
     private final LinkedBlockingQueue<Tweet> tweetQueue;
     private final int port;
+    private boolean connected;
 
     public WorkerHandler(int port, LinkedBlockingQueue<Tweet> tweetQueue)
     {
         this.port = port;
         this.tweetQueue = tweetQueue;
+        this.connected = false;
     }
 
     @Override
@@ -28,23 +31,35 @@ public class WorkerHandler implements Runnable
     {
         try(ServerSocket listeningConnection = new ServerSocket(port))
         {
-            Socket connection = listeningConnection.accept();
-            ObjectOutputStream objectSender = new ObjectOutputStream(connection.getOutputStream());
-
-            //Temp one connection only hack
             while(true)
             {
-                if(!tweetQueue.isEmpty())
+                Socket connection = listeningConnection.accept();
+                System.out.println("Worker instance connected from: " + connection.getInetAddress());
+                ObjectOutputStream objectSender = new ObjectOutputStream(connection.getOutputStream());
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                connected = true;
+
+                while (connected)
                 {
-                    try
+                    if (!tweetQueue.isEmpty())
                     {
-                        objectSender.writeObject(tweetQueue.take());
-                        objectSender.flush();
-                        objectSender.reset();
-                    }
-                    catch(InterruptedException iException)
-                    {
-                        System.out.println("Error: " + iException.getMessage());
+                        try
+                        {
+                            objectSender.writeObject(tweetQueue.take());
+                            objectSender.flush();
+                            objectSender.reset();
+
+                            String response = reader.readLine();
+                            if(response.equalsIgnoreCase("false"))
+                            {
+                                connected = false;
+                                createNewWorkerInstance();
+                            }
+                        }
+                        catch (InterruptedException iException)
+                        {
+                            System.out.println("Error: " + iException.getMessage());
+                        }
                     }
                 }
             }
@@ -53,5 +68,10 @@ public class WorkerHandler implements Runnable
         {
             System.out.println("Error: " + ioException.getMessage());
         }
+    }
+
+    public void createNewWorkerInstance()
+    {
+        System.out.println("Creating a new worker instance..");
     }
 }
