@@ -17,11 +17,11 @@ public class ClientRequest implements Runnable
     private final Socket clientConnection;
 
     private final ConcurrentHashMap<String, Query> results;
-    private final PriorityBlockingQueue<Query> requests;
+    private final PriorityBlockingQueue<Message> requests;
     private State currentState;
     private boolean running;
 
-    public ClientRequest(Socket connection, PriorityBlockingQueue<Query> requests, ConcurrentHashMap<String, Query> results)
+    public ClientRequest(Socket connection, PriorityBlockingQueue<Message> requests, ConcurrentHashMap<String, Query> results)
     {
         this.clientConnection = connection;
         this.requests = requests;
@@ -66,7 +66,7 @@ public class ClientRequest implements Runnable
         return results;
     }
 
-    public PriorityBlockingQueue<Query> getRequestsPriorityQueue()
+    public PriorityBlockingQueue<Message> getRequestsPriorityQueue()
     {
         return requests;
     }

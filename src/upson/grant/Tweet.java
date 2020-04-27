@@ -8,7 +8,7 @@ import java.sql.Timestamp;
   @author Adib Shadman : 468684
 */
 
-public class Tweet implements Serializable
+public class Tweet extends Message implements Serializable, Comparable
 {
     private final long UID;
     private final String sentiment;
@@ -16,8 +16,10 @@ public class Tweet implements Serializable
     private final String message;
     private final Timestamp dateCreated;
 
-    public Tweet(long UID, String sentiment, String airline, String message, Timestamp created)
+    public Tweet(long UID, String sentiment, String airline, String message, Timestamp created, int priority)
     {
+        super(priority);
+
         this.UID = UID;
         this.sentiment = sentiment;
         this.airline = airline;
@@ -30,4 +32,11 @@ public class Tweet implements Serializable
     public String getAirline() { return airline; }
     public String getMessage() { return message; }
     public Timestamp getDateCreated() { return dateCreated; }
+
+    @Override
+    public int compareTo(Object o)
+    {
+        Message message = (Message)o;
+        return Integer.compare(super.getPriority(), message.getPriority());
+    }
 }

@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 /*
   @author Grant Upson : 385831
@@ -17,15 +18,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class TweetHandler implements Runnable
 {
-    private final LinkedBlockingQueue<Tweet> tweetQueue;
+    private final PriorityBlockingQueue<Message> requests;
     private final String hostname;
     private final int port;
 
-    public TweetHandler(String hostname, int port, LinkedBlockingQueue<Tweet> tweetQueue)
+    public TweetHandler(String hostname, int port, PriorityBlockingQueue<Message> requests)
     {
         this.hostname = hostname;
         this.port = port;
-        this.tweetQueue = tweetQueue;
+        this.requests = requests;
     }
 
     @Override
@@ -46,10 +47,11 @@ public class TweetHandler implements Runnable
                     Date parsedDate = formatter.parse(tweet[12]);
                     dateCreated = new java.sql.Timestamp(parsedDate.getTime());
 
-                    Tweet newTweet = new Tweet(Long.parseLong(tweet[0]), tweet[1], tweet[5], tweet[10], dateCreated);
-                    tweetQueue.put(newTweet);
+                    Tweet newTweet = new Tweet(Long.parseLong(tweet[0]), tweet[1], tweet[5], tweet[10], dateCreated, 5);
+
+                    requests.put(newTweet);
                 }
-                catch(ParseException | InterruptedException exception)
+                catch(ParseException exception)
                 {
                     System.out.println("Error: " + exception);
                 }

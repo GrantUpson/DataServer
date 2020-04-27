@@ -16,24 +16,21 @@ import java.sql.Timestamp;
 public class DataServer
 {
     private final ConcurrentHashMap<String, Query> results;
-    private final PriorityBlockingQueue<Query> requests;
-    private final LinkedBlockingQueue<Tweet> tweetQueue;
+    private final PriorityBlockingQueue<Message> requests;
 
     private final int port;
 
     public DataServer(int port)
     {
-        results = new ConcurrentHashMap<>(1000);
-        requests = new PriorityBlockingQueue<>(300);
-        tweetQueue = new LinkedBlockingQueue<>(300);
+        results = new ConcurrentHashMap<>(2000);
+        requests = new PriorityBlockingQueue<>(500);
         this.port = port;
     }
 
     public void launch()
     {
-        new Thread(new WorkerHandler(7777, tweetQueue)).start();
-        new Thread(new QueryHandler(8888, requests, results)).start();
-        new Thread(new TweetHandler("localhost", 9999, tweetQueue)).start();
+        new Thread(new TweetHandler("localhost", 9999, requests)).start();
+        new Thread(new QueryHandler(7777, requests, results)).start();
 
         try(ServerSocket listeningConnection = new ServerSocket(port))
         {

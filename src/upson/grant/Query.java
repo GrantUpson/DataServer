@@ -5,13 +5,13 @@ package upson.grant;
   @author Adib Shadman : 468684
 */
 
-import org.jetbrains.annotations.NotNull;
+import java.io.Serializable;
 
-public class Query implements Comparable
+public class Query extends Message implements Serializable, Comparable
 {
     public enum Type { MESSAGE, CONTAINS_WORD, FROM_AIRLINE, MOST_FREQUENT_CHARACTER; }
 
-    public enum Status
+    private enum Status
     {
         SUBMITTED { public Status updateStatus() { return PROCESSING; }},
         PROCESSING { public Status updateStatus() { return COMPLETE; }},
@@ -21,36 +21,34 @@ public class Query implements Comparable
     }
 
     private final int id;
-    private final int priority;
     private final Type type;
     private final String request;
     private Status currentStatus;
-    private String result;
 
     public Query(int id, Type type, String request, int priority)
     {
+        super(priority);
+
         this.id = id;
-        this.priority = priority;
         this.type = type;
         this.request = request;
         this.currentStatus = Status.SUBMITTED;
-        this.result = null;
     }
 
     public int getID() { return id; }
-    public int getPriority() { return priority; }
+    public int getPriority() { return super.getPriority(); }
     public Type getType() { return type; }
     public String getRequest() { return request; }
     public String getStatus() { return currentStatus.name(); }
-    public String getResult() { return result; }
+    public String getResult() { return super.getResult(); }
 
     public void updateStatus() { currentStatus = currentStatus.updateStatus(); }
-    public void setResult(String result) { this.result = result; }
+    public void setResult(String result) { super.setResult(result); }
 
     @Override
-    public int compareTo(@NotNull Object o)
+    public int compareTo(Object o)
     {
-        Query query = (Query)o;
-        return Integer.compare(priority, query.getPriority());
+        Message message = (Message)o;
+        return Integer.compare(super.getPriority(), message.getPriority());
     }
 }

@@ -20,7 +20,7 @@ public class Login implements State
     {
         this.connection = connection;
         this.writer = writer;
-        accountDatabase = new Database("root", "");
+        accountDatabase = new Database("grant", "Killthemall2");
     }
 
     @Override

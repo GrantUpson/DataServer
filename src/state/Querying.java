@@ -1,6 +1,7 @@
 package state;
 
 import upson.grant.ClientRequest;
+import upson.grant.Message;
 import upson.grant.Query;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,12 +17,12 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 public class Querying implements State
 {
-    private final PriorityBlockingQueue<Query> requests;
+    private final PriorityBlockingQueue<Message> requests;
     private final ConcurrentHashMap<String, Query> results;
     private final ClientRequest connection;
     private final BufferedWriter writer;
 
-    public Querying(ClientRequest connection, BufferedWriter writer, PriorityBlockingQueue<Query> requests, ConcurrentHashMap<String, Query> results)
+    public Querying(ClientRequest connection, BufferedWriter writer, PriorityBlockingQueue<Message> requests, ConcurrentHashMap<String, Query> results)
     {
         this.connection = connection;
         this.writer = writer;
@@ -52,13 +53,13 @@ public class Querying implements State
                     requests.add(new Query(id, Query.Type.MESSAGE, result[1], Integer.parseInt(result[2])));
                     break;
                 case "2":
-                    response = "Contains word!";
+                    requests.add(new Query(id, Query.Type.CONTAINS_WORD, result[1], Integer.parseInt(result[2])));
                     break;
                 case "3":
-                    response = "Number of tweets from airline!";
+                    requests.add(new Query(id, Query.Type.FROM_AIRLINE, result[1], Integer.parseInt(result[2])));
                     break;
                 case "4":
-                    response = "Most frequent character in tweet!";
+                    requests.add(new Query(id, Query.Type.MOST_FREQUENT_CHARACTER, result[1], Integer.parseInt(result[2])));
                     break;
                 default:
                     response = "Invalid option, try again";
@@ -124,12 +125,17 @@ public class Querying implements State
     {
         boolean successful = false;
 
-        for(Query query : requests)
+        for(Message message : requests)
         {
-            if(query.getID() == ID)
+            if(message instanceof Query)
             {
-                requests.remove(query);
-                successful = true;
+                Query query = (Query)message;
+
+                if(query.getID() == ID)
+                {
+                    requests.remove(message);
+                    successful = true;
+                }
             }
         }
 
