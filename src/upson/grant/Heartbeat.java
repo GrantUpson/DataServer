@@ -1,7 +1,5 @@
 package upson.grant;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.Serializable;
 
 /*
@@ -11,9 +9,9 @@ import java.io.Serializable;
 
 public class Heartbeat extends Message implements Serializable, Comparable
 {
-    public Heartbeat(int priority)
+    public Heartbeat(int priority, int id)
     {
-        super(priority);
+        super(priority, id);
     }
 
     @Override

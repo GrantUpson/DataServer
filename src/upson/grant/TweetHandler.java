@@ -47,7 +47,7 @@ public class TweetHandler implements Runnable
                     Date parsedDate = formatter.parse(tweet[12]);
                     dateCreated = new java.sql.Timestamp(parsedDate.getTime());
 
-                    Tweet newTweet = new Tweet(Long.parseLong(tweet[0]), tweet[1], tweet[5], tweet[10], dateCreated, 5);
+                    Tweet newTweet = new Tweet(Long.parseLong(tweet[0]), tweet[1], tweet[5], tweet[10], dateCreated, 5, QueryHandler.storageWorkerID);
 
                     requests.put(newTweet);
                 }

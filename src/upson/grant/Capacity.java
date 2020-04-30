@@ -6,9 +6,9 @@ public class Capacity extends Message implements Serializable
 {
     private final int maximumCapacity;
 
-    public Capacity(int capacity)
+    public Capacity(int capacity, int workerID)
     {
-        super(0);
+        super(0, workerID);
         this.maximumCapacity = capacity;
     }
 

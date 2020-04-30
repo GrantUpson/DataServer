@@ -68,7 +68,7 @@ public class Authenticated implements State
                             response = "The query is currently processing, try again later";
                             break;
                         case "COMPLETE":
-                            response = "The result of the query is: " + query.getResult();
+                            response = "The result of the query is: " + query.getResult() + "/And the bill for the query is: $" + query.getBill() + "/ ";
                             break;
                     }
                 }

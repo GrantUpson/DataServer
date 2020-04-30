@@ -16,9 +16,9 @@ public class Tweet extends Message implements Serializable, Comparable
     private final String message;
     private final Timestamp dateCreated;
 
-    public Tweet(long UID, String sentiment, String airline, String message, Timestamp created, int priority)
+    public Tweet(long UID, String sentiment, String airline, String message, Timestamp created, int priority, int workerID)
     {
-        super(priority);
+        super(priority, workerID);
 
         this.UID = UID;
         this.sentiment = sentiment;

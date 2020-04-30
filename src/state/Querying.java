@@ -3,6 +3,8 @@ package state;
 import upson.grant.ClientRequest;
 import upson.grant.Message;
 import upson.grant.Query;
+import upson.grant.QueryHandler;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -47,19 +49,37 @@ public class Querying implements State
             int id = generateQueryID();
             response = "Your query has been submitted successfully. Query ID: " + id;
 
+            Query query = null;
+
             switch(result[0])
             {
                 case "1":
-                    requests.add(new Query(id, Query.Type.MESSAGE, result[1], Integer.parseInt(result[2])));
+                    for(int i = 1; i <= QueryHandler.storageWorkerID; i++)
+                    {
+                        requests.add(query = new Query(i, Query.Type.MESSAGE, result[1], Integer.parseInt(result[2])));
+                    }
+                    results.put(Integer.toString(id), query);
                     break;
                 case "2":
-                    requests.add(new Query(id, Query.Type.CONTAINS_WORD, result[1], Integer.parseInt(result[2])));
+                    for(int i = 1; i <= QueryHandler.storageWorkerID; i++)
+                    {
+                        requests.add(query = new Query(id, Query.Type.CONTAINS_WORD, result[1], Integer.parseInt(result[2])));
+                    }
+                    results.put(Integer.toString(id), query);
                     break;
                 case "3":
-                    requests.add(new Query(id, Query.Type.FROM_AIRLINE, result[1], Integer.parseInt(result[2])));
+                    for(int i = 1; i <= QueryHandler.storageWorkerID; i++)
+                    {
+                        requests.add(query = new Query(id, Query.Type.FROM_AIRLINE, result[1], Integer.parseInt(result[2])));
+                    }
+                    results.put(Integer.toString(id), query);
                     break;
                 case "4":
-                    requests.add(new Query(id, Query.Type.MOST_FREQUENT_CHARACTER, result[1], Integer.parseInt(result[2])));
+                    for(int i = 1; i <= QueryHandler.storageWorkerID; i++)
+                    {
+                        requests.add(query = new Query(id, Query.Type.MOST_FREQUENT_CHARACTER, result[1], Integer.parseInt(result[2])));
+                    }
+                    results.put(Integer.toString(id), query);
                     break;
                 default:
                     response = "Invalid option, try again";

@@ -20,30 +20,36 @@ public class Query extends Message implements Serializable, Comparable
         public abstract Status updateStatus();
     }
 
-    private final int id;
     private final Type type;
     private final String request;
     private Status currentStatus;
+    private double bill;
+    private long timeTakenToCompute;
 
     public Query(int id, Type type, String request, int priority)
     {
-        super(priority);
+        super(priority, id);
 
-        this.id = id;
         this.type = type;
         this.request = request;
         this.currentStatus = Status.SUBMITTED;
+        this.bill = 0.00;
+        this.timeTakenToCompute = 0;
     }
 
-    public int getID() { return id; }
+    public int getID() { return super.getWorkerID(); }
     public int getPriority() { return super.getPriority(); }
     public Type getType() { return type; }
     public String getRequest() { return request; }
     public String getStatus() { return currentStatus.name(); }
     public String getResult() { return super.getResult(); }
+    public double getBill() { return bill; }
+    public long getTimeTakenToCompute() { return timeTakenToCompute; }
 
     public void updateStatus() { currentStatus = currentStatus.updateStatus(); }
     public void setResult(String result) { super.setResult(result); }
+    public void setBill(double amount) { bill = amount; }
+    public void setTimeTakenToCompute(long time) { timeTakenToCompute = time; }
 
     @Override
     public int compareTo(Object o)
