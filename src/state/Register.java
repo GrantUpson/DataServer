@@ -21,7 +21,7 @@ public class Register implements State
     {
         this.connection = connection;
         this.writer = writer;
-        this.accountDatabase = new Database("USER", "PASS");
+        this.accountDatabase = new Database("grant", "Killthemall2");
     }
 
     @Override

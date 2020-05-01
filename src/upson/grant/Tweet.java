@@ -32,6 +32,7 @@ public class Tweet extends Message implements Serializable, Comparable
     public String getAirline() { return airline; }
     public String getMessage() { return message; }
     public Timestamp getDateCreated() { return dateCreated; }
+    public int getWorkerID() { return super.getWorkerID(); }
 
     @Override
     public int compareTo(Object o)

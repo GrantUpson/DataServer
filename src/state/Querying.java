@@ -56,28 +56,28 @@ public class Querying implements State
                 case "1":
                     for(int i = 1; i <= QueryHandler.storageWorkerID; i++)
                     {
-                        requests.add(query = new Query(i, Query.Type.MESSAGE, result[1], Integer.parseInt(result[2])));
+                        requests.add(query = new Query(id, i, Query.Type.MESSAGE, result[1], Integer.parseInt(result[2])));
                     }
                     results.put(Integer.toString(id), query);
                     break;
                 case "2":
                     for(int i = 1; i <= QueryHandler.storageWorkerID; i++)
                     {
-                        requests.add(query = new Query(id, Query.Type.CONTAINS_WORD, result[1], Integer.parseInt(result[2])));
+                        requests.add(query = new Query(id, i, Query.Type.CONTAINS_WORD, result[1], Integer.parseInt(result[2])));
                     }
                     results.put(Integer.toString(id), query);
                     break;
                 case "3":
                     for(int i = 1; i <= QueryHandler.storageWorkerID; i++)
                     {
-                        requests.add(query = new Query(id, Query.Type.FROM_AIRLINE, result[1], Integer.parseInt(result[2])));
+                        requests.add(query = new Query(id, i, Query.Type.FROM_AIRLINE, result[1], Integer.parseInt(result[2])));
                     }
                     results.put(Integer.toString(id), query);
                     break;
                 case "4":
                     for(int i = 1; i <= QueryHandler.storageWorkerID; i++)
                     {
-                        requests.add(query = new Query(id, Query.Type.MOST_FREQUENT_CHARACTER, result[1], Integer.parseInt(result[2])));
+                        requests.add(query = new Query(id, i, Query.Type.MOST_FREQUENT_CHARACTER, result[1], Integer.parseInt(result[2])));
                     }
                     results.put(Integer.toString(id), query);
                     break;

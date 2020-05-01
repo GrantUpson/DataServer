@@ -17,17 +17,19 @@ public class QueryHandler implements Runnable
     private final PriorityBlockingQueue<Message> requests;
     private final ConcurrentHashMap<String, Query> results;
     private final int port;
+    private final int capacity;
 
     public static int storageWorkerID;
     private boolean initialWorker;
 
-    public QueryHandler(int port, PriorityBlockingQueue<Message> requests, ConcurrentHashMap<String, Query> results)
+    public QueryHandler(int port, int capacity, PriorityBlockingQueue<Message> requests, ConcurrentHashMap<String, Query> results)
     {
         this.requests = requests;
         this.results = results;
         this.port = port;
         this.initialWorker = true;
         storageWorkerID = 1;
+        this.capacity = capacity;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class QueryHandler implements Runnable
 
                 if(initialWorker) { initialWorker = false; }
                 else { storageWorkerID++; }
-                new Thread(new WorkerThread(storageWorkerID,this, connection, requests, results)).start();
+                new Thread(new WorkerThread(storageWorkerID, capacity,this, connection, requests, results)).start();
             }
         }
         catch(IOException ioException)

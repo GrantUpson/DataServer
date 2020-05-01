@@ -25,11 +25,13 @@ public class Query extends Message implements Serializable, Comparable
     private Status currentStatus;
     private double bill;
     private long timeTakenToCompute;
+    private final int id;
 
-    public Query(int id, Type type, String request, int priority)
+    public Query(int id, int workerID, Type type, String request, int priority)
     {
-        super(priority, id);
+        super(priority, workerID);
 
+        this.id = id;
         this.type = type;
         this.request = request;
         this.currentStatus = Status.SUBMITTED;
@@ -37,7 +39,7 @@ public class Query extends Message implements Serializable, Comparable
         this.timeTakenToCompute = 0;
     }
 
-    public int getID() { return super.getWorkerID(); }
+    public int getID() { return id; }
     public int getPriority() { return super.getPriority(); }
     public Type getType() { return type; }
     public String getRequest() { return request; }

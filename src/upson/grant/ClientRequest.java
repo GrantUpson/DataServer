@@ -46,13 +46,11 @@ public class ClientRequest implements Runnable
                 clientWriter.write(result + "\r\n");
                 clientWriter.flush();
             }
-
-            System.out.println("Client disconnected from " + clientConnection.getInetAddress() + " on port " + clientConnection.getLocalPort() +
-                    " at " + new Timestamp(System.currentTimeMillis()));
         }
         catch(IOException | NullPointerException exception)
         {
-            System.out.println("Error: " + exception.getMessage());
+            System.out.println("Client disconnected from " + clientConnection.getInetAddress() + " on port " + clientConnection.getLocalPort() +
+                    " at " + new Timestamp(System.currentTimeMillis()));
         }
     }
 

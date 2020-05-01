@@ -17,20 +17,24 @@ public class DataServer
 {
     private final ConcurrentHashMap<String, Query> results;
     private final PriorityBlockingQueue<Message> requests;
+    private final int capacity;
 
     private final int port;
 
-    public DataServer(int port)
+    public DataServer(int port, int capacity)
     {
         results = new ConcurrentHashMap<>(2000);
         requests = new PriorityBlockingQueue<>(500);
         this.port = port;
+        this.capacity = capacity;
     }
 
     public void launch()
     {
+        System.out.println("Starting Data Server, worker capacity set to: " + capacity);
+
         new Thread(new TweetHandler("localhost", 9999, requests)).start();
-        new Thread(new QueryHandler(7777, requests, results)).start();
+        new Thread(new QueryHandler(7777, capacity, requests, results)).start();
 
         try(ServerSocket listeningConnection = new ServerSocket(port))
         {
@@ -50,13 +54,13 @@ public class DataServer
 
     public static void main(String[] args)
     {
-        if(args.length != 1)
+        if(args.length != 2)
         {
             System.out.println("Error: Invalid number of parameters");
         }
         else
         {
-            new DataServer(Integer.parseInt(args[0])).launch();
+            new DataServer(Integer.parseInt(args[0]), Integer.parseInt(args[1])).launch();
         }
     }
 }
