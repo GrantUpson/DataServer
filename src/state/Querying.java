@@ -44,7 +44,11 @@ public class Querying implements State
         String[] result = command.split(" ");
         String response = "";
 
-        if(result.length == 3)
+        if(QueryHandler.workerIDs.isEmpty())
+        {
+            response = "No workers are currently connected, try again later.";
+        }
+        else if(result.length == 3)
         {
             int id = generateQueryID();
             response = "Your query has been submitted successfully. Query ID: " + id;
@@ -54,30 +58,30 @@ public class Querying implements State
             switch(result[0])
             {
                 case "1":
-                    for(int i = 1; i <= QueryHandler.storageWorkerID; i++)
+                    for(int i = 0; i < QueryHandler.workerIDs.size(); i++)
                     {
-                        requests.add(query = new Query(id, i, Query.Type.MESSAGE, result[1], Integer.parseInt(result[2])));
+                        requests.add(query = new Query(id, QueryHandler.workerIDs.get(i), Query.Type.MESSAGE, result[1], Integer.parseInt(result[2])));
                     }
                     results.put(Integer.toString(id), query);
                     break;
                 case "2":
-                    for(int i = 1; i <= QueryHandler.storageWorkerID; i++)
+                    for(int i = 0; i < QueryHandler.workerIDs.size(); i++)
                     {
-                        requests.add(query = new Query(id, i, Query.Type.CONTAINS_WORD, result[1], Integer.parseInt(result[2])));
+                        requests.add(query = new Query(id, QueryHandler.workerIDs.get(i), Query.Type.CONTAINS_WORD, result[1], Integer.parseInt(result[2])));
                     }
                     results.put(Integer.toString(id), query);
                     break;
                 case "3":
-                    for(int i = 1; i <= QueryHandler.storageWorkerID; i++)
+                    for(int i = 0; i < QueryHandler.workerIDs.size(); i++)
                     {
-                        requests.add(query = new Query(id, i, Query.Type.FROM_AIRLINE, result[1], Integer.parseInt(result[2])));
+                        requests.add(query = new Query(id, QueryHandler.workerIDs.get(i), Query.Type.FROM_AIRLINE, result[1], Integer.parseInt(result[2])));
                     }
                     results.put(Integer.toString(id), query);
                     break;
                 case "4":
-                    for(int i = 1; i <= QueryHandler.storageWorkerID; i++)
+                    for(int i = 0; i < QueryHandler.workerIDs.size(); i++)
                     {
-                        requests.add(query = new Query(id, i, Query.Type.MOST_FREQUENT_CHARACTER, result[1], Integer.parseInt(result[2])));
+                        requests.add(query = new Query(id, QueryHandler.workerIDs.get(i), Query.Type.MOST_FREQUENT_CHARACTER, result[1], Integer.parseInt(result[2])));
                     }
                     results.put(Integer.toString(id), query);
                     break;

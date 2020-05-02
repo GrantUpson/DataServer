@@ -2,8 +2,8 @@ package upson.grant;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /*
@@ -17,17 +17,18 @@ public class WorkerThread implements Runnable
     private final PriorityBlockingQueue<Message> requests;
     private final ConcurrentHashMap<String, Query> results;
     private final QueryHandler handler;
-    private final int id;
+    private int id;
     private final int capacity;
+    private final CopyOnWriteArrayList<Integer> workerIDs;
 
-    public WorkerThread(int id, int capacity, QueryHandler handler, Socket connection, PriorityBlockingQueue<Message> requests, ConcurrentHashMap<String, Query> results)
+    public WorkerThread(int capacity, QueryHandler handler, Socket connection, PriorityBlockingQueue<Message> requests, ConcurrentHashMap<String, Query> results, CopyOnWriteArrayList<Integer> workerIDs)
     {
         this.handler = handler;
         this.connection = connection;
         this.requests = requests;
         this.results = results;
-        this.id = id;
         this.capacity = capacity;
+        this.workerIDs = workerIDs;
     }
 
     @Override
@@ -37,6 +38,11 @@ public class WorkerThread implements Runnable
         {
             ObjectOutputStream messageSender = new ObjectOutputStream(connection.getOutputStream());
             ObjectInputStream messageReceiver = new ObjectInputStream(connection.getInputStream());
+
+            Message idMessage = (Message)messageReceiver.readObject();
+            this.id = Integer.parseInt(idMessage.getResult());
+            workerIDs.add(id);
+
 
             messageSender.writeObject(new Capacity(capacity, id));
             messageSender.flush();
@@ -54,7 +60,6 @@ public class WorkerThread implements Runnable
                 {
                     requests.add(new Heartbeat(1, id));
                     beginningTime = System.currentTimeMillis();
-                    System.out.println("Sending Heartbeat Message on ID: " + id);
                 }
 
                 Message newMessage = retrieveMessage();
@@ -73,7 +78,7 @@ public class WorkerThread implements Runnable
 
                     Message response = (Message)messageReceiver.readObject();
 
-                    if(response instanceof Heartbeat) { System.out.println("Heartbeat: " + response.getResult()); }
+                    if(response instanceof Heartbeat) { System.out.println("Heartbeat Response: " + response.getResult()); }
 
                     if(response instanceof Tweet)
                     {
@@ -90,14 +95,20 @@ public class WorkerThread implements Runnable
                         aggregateResults((Query)response);
                         System.out.println("Query of ID: " + ((Query) response).getID() + " computed successfully. Time taken: " + ((Query) response).getTimeTakenToCompute() + " milliseconds");
                     }
-
-                    //Thread.sleep(50);
                 }
             }
         }
         catch(IOException | ClassNotFoundException exception)
         {
             System.out.println("Connection has been closed.. from worker of ID: " + id);
+
+            for(int i = 0; i < workerIDs.size(); i++)
+            {
+                if(workerIDs.get(i) == id)
+                {
+                    workerIDs.remove(i);
+                }
+            }
         }
     }
 

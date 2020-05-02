@@ -1,11 +1,11 @@
 package upson.grant;
 
+import java.io.Serializable;
+
 /*
   @author Grant Upson : 385831
   @author Adib Shadman : 468684
 */
-
-import java.io.Serializable;
 
 public class Message implements Serializable
 {

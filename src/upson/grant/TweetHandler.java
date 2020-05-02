@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /*
@@ -36,23 +35,33 @@ public class TweetHandler implements Runnable
         {
             String tweetData;
 
-            while((tweetData = reader.readLine()) != null)
+            while(true)
             {
-                String[] tweet = tweetData.split("\t");
-
-                try
+                if(!QueryHandler.workerIDs.isEmpty())
                 {
-                    Timestamp dateCreated;
-                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy hh:mm");
-                    Date parsedDate = formatter.parse(tweet[12]);
-                    dateCreated = new java.sql.Timestamp(parsedDate.getTime());
+                    while((tweetData = reader.readLine()) != null)
+                    {
+                        String[] tweet = tweetData.split("\t");
 
-                    Tweet newTweet = new Tweet(Long.parseLong(tweet[0]), tweet[1], tweet[5], tweet[10], dateCreated, 5, QueryHandler.storageWorkerID);
-                    requests.add(newTweet);
-                }
-                catch(ParseException exception)
-                {
-                    System.out.println("Error: " + exception);
+                        try
+                        {
+                            Timestamp dateCreated;
+                            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy hh:mm");
+                            Date parsedDate = formatter.parse(tweet[12]);
+                            dateCreated = new java.sql.Timestamp(parsedDate.getTime());
+
+                            if(!QueryHandler.workerIDs.isEmpty())
+                            {
+                                Tweet newTweet = new Tweet(Long.parseLong(tweet[0]), tweet[1], tweet[5], tweet[10], dateCreated, 5, QueryHandler.workerIDs.get(QueryHandler.workerIDs.size() - 1));
+                                requests.add(newTweet);
+                            }
+                            else { break; }
+                        }
+                        catch(ParseException exception)
+                        {
+                            System.out.println("Error: " + exception);
+                        }
+                    }
                 }
             }
         }

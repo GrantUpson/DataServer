@@ -16,19 +16,15 @@ public class QueryHandler implements Runnable
 {
     private final PriorityBlockingQueue<Message> requests;
     private final ConcurrentHashMap<String, Query> results;
+    public static CopyOnWriteArrayList<Integer> workerIDs = new CopyOnWriteArrayList<>();
     private final int port;
     private final int capacity;
-
-    public static int storageWorkerID;
-    private boolean initialWorker;
 
     public QueryHandler(int port, int capacity, PriorityBlockingQueue<Message> requests, ConcurrentHashMap<String, Query> results)
     {
         this.requests = requests;
         this.results = results;
         this.port = port;
-        this.initialWorker = true;
-        storageWorkerID = 1;
         this.capacity = capacity;
     }
 
@@ -42,9 +38,7 @@ public class QueryHandler implements Runnable
                 Socket connection = listeningConnection.accept();
                 System.out.println("Worker connection from: " + connection.getInetAddress() + " accepted.");
 
-                if(initialWorker) { initialWorker = false; }
-                else { storageWorkerID++; }
-                new Thread(new WorkerThread(storageWorkerID, capacity,this, connection, requests, results)).start();
+                new Thread(new WorkerThread(capacity,this, connection, requests, results, workerIDs)).start();
             }
         }
         catch(IOException ioException)
@@ -52,6 +46,4 @@ public class QueryHandler implements Runnable
             System.out.println("Error: " + ioException.getMessage());
         }
     }
-
-    public int getStorageWorkerID() { return storageWorkerID; }
 }
