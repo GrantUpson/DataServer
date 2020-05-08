@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="openstack">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../Java Libraries/openstack" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../Java Libraries/openstack" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/../../Java Libraries/openstack" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../../Java Libraries/openstack" recursive="false" type="SOURCES" />
+  </library>
+</component>

@@ -78,7 +78,7 @@ public class WorkerThread implements Runnable
 
                     Message response = (Message)messageReceiver.readObject();
 
-                    if(response instanceof Heartbeat) { System.out.println("Heartbeat Response: " + response.getResult()); }
+                    if(response instanceof Heartbeat) { System.out.println(response.getResult()); }
 
                     if(response instanceof Tweet)
                     {
@@ -122,7 +122,7 @@ public class WorkerThread implements Runnable
                 {
                     message = requests.peek();
 
-                    if(message != null)
+                    if(message != null && message.getWorkerID() == id)
                     {
                         message = requests.take();
                     }
@@ -160,6 +160,9 @@ public class WorkerThread implements Runnable
 
     public void createNewWorkerInstance()
     {
-        System.out.println("Creating a new worker instance of capacity: " + capacity);
+        WorkerBuilder newWorker = new WorkerBuilder();
+        String instanceID = newWorker.createWorker();
+
+        System.out.println("New worker created of capacity: " + capacity);
     }
 }
