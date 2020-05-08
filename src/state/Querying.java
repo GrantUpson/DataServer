@@ -50,45 +50,59 @@ public class Querying implements State
         }
         else if(result.length == 3)
         {
+            boolean wrongPriority = false;
+
+            try
+            {
+                Integer.parseInt(result[2]);
+            }
+            catch(NumberFormatException numberFormatException)
+            {
+                result[2] = String.valueOf(10);
+                wrongPriority = true;
+            }
+
             int id = generateQueryID();
+
             response = "Your query has been submitted successfully. Query ID: " + id;
+            if(wrongPriority) { response += " | An invalid priority has been given, defaulting to 10"; }
 
             Query query = null;
 
-            switch(result[0])
-            {
-                case "1":
-                    for(int i = 0; i < QueryHandler.workerIDs.size(); i++)
-                    {
-                        requests.add(query = new Query(id, QueryHandler.workerIDs.get(i), Query.Type.MESSAGE, result[1], Integer.parseInt(result[2])));
-                    }
-                    results.put(Integer.toString(id), query);
-                    break;
-                case "2":
-                    for(int i = 0; i < QueryHandler.workerIDs.size(); i++)
-                    {
-                        requests.add(query = new Query(id, QueryHandler.workerIDs.get(i), Query.Type.CONTAINS_WORD, result[1], Integer.parseInt(result[2])));
-                    }
-                    results.put(Integer.toString(id), query);
-                    break;
-                case "3":
-                    for(int i = 0; i < QueryHandler.workerIDs.size(); i++)
-                    {
-                        requests.add(query = new Query(id, QueryHandler.workerIDs.get(i), Query.Type.FROM_AIRLINE, result[1], Integer.parseInt(result[2])));
-                    }
-                    results.put(Integer.toString(id), query);
-                    break;
-                case "4":
-                    for(int i = 0; i < QueryHandler.workerIDs.size(); i++)
-                    {
-                        requests.add(query = new Query(id, QueryHandler.workerIDs.get(i), Query.Type.MOST_FREQUENT_CHARACTER, result[1], Integer.parseInt(result[2])));
-                    }
-                    results.put(Integer.toString(id), query);
-                    break;
-                default:
-                    response = "Invalid option, try again";
-                    break;
-            }
+                switch(result[0])
+                {
+                    case "1":
+                        for(int i = 0; i < QueryHandler.workerIDs.size(); i++)
+                        {
+                            requests.add(query = new Query(id, QueryHandler.workerIDs.get(i), Query.Type.MESSAGE, result[1], Integer.parseInt(result[2])));
+                        }
+                        results.put(Integer.toString(id), query);
+                        break;
+                    case "2":
+                        for(int i = 0; i < QueryHandler.workerIDs.size(); i++)
+                        {
+                            requests.add(query = new Query(id, QueryHandler.workerIDs.get(i), Query.Type.CONTAINS_WORD, result[1], Integer.parseInt(result[2])));
+                        }
+                        results.put(Integer.toString(id), query);
+                        break;
+                    case "3":
+                        for(int i = 0; i < QueryHandler.workerIDs.size(); i++)
+                        {
+                            requests.add(query = new Query(id, QueryHandler.workerIDs.get(i), Query.Type.FROM_AIRLINE, result[1], Integer.parseInt(result[2])));
+                        }
+                        results.put(Integer.toString(id), query);
+                        break;
+                    case "4":
+                        for(int i = 0; i < QueryHandler.workerIDs.size(); i++)
+                        {
+                            requests.add(query = new Query(id, QueryHandler.workerIDs.get(i), Query.Type.MOST_FREQUENT_CHARACTER, result[1], Integer.parseInt(result[2])));
+                        }
+                        results.put(Integer.toString(id), query);
+                        break;
+                    default:
+                        response = "Invalid option, try again";
+                        break;
+                }
         }
         else if(result.length == 2)
         {
@@ -132,7 +146,7 @@ public class Querying implements State
     {
         final String MENU = "1) Search for a tweet by ID: <1> <ID> <Priority>/2) Search for a tweet containing a word: <2> <Word> <Priority>/" +
                 "3) Number of tweets from an airline: <3> <Airline> <Priority>/4) Most frequent character in a tweet: <4> <TweetID> <Priority>/" +
-                "5) Cancel query: <5> <ID< /6) Return to Options: <6>";
+                "5) Cancel query: <5> <ID> /6) Return to Options: <6>";
 
         try
         {

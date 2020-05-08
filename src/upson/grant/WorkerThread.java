@@ -126,6 +126,10 @@ public class WorkerThread implements Runnable
                     {
                         message = requests.take();
                     }
+                    else
+                    {
+                        message = null;
+                    }
                 }
                 catch(InterruptedException interruptedException)
                 {
